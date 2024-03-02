@@ -51,9 +51,7 @@ def selenium_endpoint():
 
   product_names_list = [product_name.text for product_name in name]
   product_price_list = [product_price.text for product_price in price]
-  product_old_price_list = [
-      product_old_price.text for product_old_price in Old_price
-  ]
+  #product_old_price_list = [product_old_price.text for product_old_price in Old_price]
   product_image_list = [img_tag.get('data-src') for img_tag in image]
   print(len(product_names_list))
   print(len(product_price_list))
