@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response,jsonify
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions  # Import for Chrome options
 from random_user_agent.user_agent import UserAgent
@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 app = Flask(__name__)
 
 
-def selenium_task():
+def selenium_task(arg):
   software_names = [SoftwareName.CHROME.value]
 
   operating_systems = [
@@ -29,8 +29,7 @@ def selenium_task():
   driver = webdriver.Chrome(options=options)  # Change to webdriver.Chrome
 
   # Perform the selenium task
-  driver.get(
-      "https://www.jumia.com.ng/catalog/?q=air+fryer&page=2#catalog-listing")
+  driver.get(arg)
   #assert "Jumia Nigeria | Online Shopping for Electronics, Fashion, Home, Beauty & Sport" in driver.title
 
   page_source = driver.page_source
@@ -39,25 +38,32 @@ def selenium_task():
   return page_source
 
 
-@app.route('/selenium')
-def selenium_endpoint():
-  page_source = selenium_task()
-  soup = BeautifulSoup(page_source, features="html.parser")
-  data = soup.find('div', class_='-pvs col12')
-  name = data.find_all('h3', class_='name')
-  price = data.find_all('div', class_='prc')
-  Old_price = data.find_all('div', class_='old')
-  image = data.find_all('img', class_='img')
+@app.route('/selenium/<string:arg>/<int:arg2>')
+def selenium_endpoint(arg,arg2):
+  results = []
 
-  product_names_list = [product_name.text for product_name in name]
-  product_price_list = [product_price.text for product_price in price]
-  #product_old_price_list = [product_old_price.text for product_old_price in Old_price]
-  product_image_list = [img_tag.get('data-src') for img_tag in image]
-  print(len(product_names_list))
-  print(len(product_price_list))
-  #print(len(product_old_price_list))
-  print(len(product_image_list))
-  return Response(page_source, mimetype='text/html')
+  for i in range(1,arg2):
+      page_source = selenium_task(f"https://www.jumia.com.ng/catalog/?q={arg}&page={i}#catalog-listing")
+      soup = BeautifulSoup(page_source, features="html.parser")
+      data = soup.find('div', class_='-pvs col12')
+      name = data.find_all('h3', class_='name')
+      price = data.find_all('div', class_='prc')
+      Old_price = data.find_all('div', class_='old')
+      image = data.find_all('img', class_='img')
+
+      product_names_list = [product_name.text for product_name in name]
+      product_price_list = [product_price.text for product_price in price]
+      # product_old_price_list = [product_old_price.text for product_old_price in Old_price]
+      product_image_list = [img_tag.get('data-src') for img_tag in image]
+      print(product_price_list)
+      results.append({
+          'product_names': product_names_list,
+          'product_prices': product_price_list,
+          # 'product_old_prices': product_old_price_list,
+          'product_images': product_image_list
+      })
+
+  return jsonify(results)
 
 
 @app.route('/discount')
