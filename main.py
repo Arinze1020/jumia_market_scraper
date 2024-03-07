@@ -38,7 +38,7 @@ def selenium_task(arg):
   return page_source
 
 
-@app.route('/selenium/<string:arg>/<int:arg2>')
+@app.route('/get_all/<string:arg>/<int:arg2>')
 def selenium_endpoint(arg,arg2):
   results = []
 
