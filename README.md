@@ -61,21 +61,25 @@ This package requires the following to run:
 # Installation
 First you have to clone the repo by writing the following code
 
- `#`
+ `Clone the git rep`
 
 Change directory to jumia python web scraper
- `cd #`
+ `cd in to the repo or open it with a text editor. Because that's where the main python file is (main.py)`
+ `Activate your Virtual Environment (venv)`
 
 Then run 
 
 `pip install -r requirements.txt`
 # Usage
-Change directory to #. Because that's where the main python file is
- `#`
-
 Then run the python file
 
 `python main.py`
+
+<h2>Endpoints:</h2>
+      <ul>
+          <li><strong>GET /</strong> - Homepage (This page)</li>
+          <li><strong>GET /product_name/{number_of_page}</strong> - Scrapes products from Jumia based on page number</li>
+          <li><strong>GET /product_name/{discount_percentage}/{number_of_page}</strong> - Scrapes products with a discount percentage from Jumia based on page number</li>
 
 # Contribution
 You can contribute to this project.
