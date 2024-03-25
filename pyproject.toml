@@ -11,6 +11,8 @@ flask = "3.0.2"
 selenium = "4.17.2"
 random-user-agent = "^1.0.1"
 beautifulsoup4 = "^4.12.3"
+replit = "^3.6.1"
+requests = "^2.31.0"
 
 
 [build-system]

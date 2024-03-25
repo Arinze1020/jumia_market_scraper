@@ -1,9 +1,10 @@
-from flask import Flask, Response,jsonify
+from flask import Flask, Response,jsonify, render_template
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions  # Import for Chrome options
 from random_user_agent.user_agent import UserAgent
 from random_user_agent.params import SoftwareName, OperatingSystem
 from bs4 import BeautifulSoup
+from replit import db
 
 app = Flask(__name__)
 
@@ -37,10 +38,22 @@ def selenium_task(arg):
   driver.close()
   return page_source
 
+product_names = []
+product_prices = []
+product_old_prices = []
+product_images = []
+results = {
+  "product_names": product_names,
+  "product_prices": product_prices,
+  "product_old_prices": product_old_prices,
+  "product_images": product_images
+  
+}
+
 
 @app.route('/get_all/<string:arg>/<int:arg2>')
 def selenium_endpoint(arg,arg2):
-  results = []
+  
 
   for i in range(1,arg2):
       page_source = selenium_task(f"https://www.jumia.com.ng/catalog/?q={arg}&page={i}#catalog-listing")
@@ -55,44 +68,48 @@ def selenium_endpoint(arg,arg2):
       product_price_list = [product_price.text for product_price in price]
       # product_old_price_list = [product_old_price.text for product_old_price in Old_price]
       product_image_list = [img_tag.get('data-src') for img_tag in image]
-      print(product_price_list)
-      results.append({
-          'product_names': product_names_list,
-          'product_prices': product_price_list,
-          # 'product_old_prices': product_old_price_list,
-          'product_images': product_image_list
-      })
+      #print(product_price_list)
+      
+      product_names.append(product_names_list)
+      product_prices.append(product_price_list)
+      # 'product_old_prices': product_old_price_list,
+      product_images.append(product_image_list)
+  
 
   return jsonify(results)
 
 
-@app.route('/discount')
-def discount():
-  page_source = selenium_task()
-  soup = BeautifulSoup(page_source, features="html.parser")
-  data = soup.find('div', class_='-pvs col12')
-  name = data.find_all('h3', class_='name')
-  price = data.find_all('div', class_='prc')
-  Old_price = data.find_all('div', class_='old')
-  image = data.find_all('img', class_='img')
+@app.route('/discount/<string:arg>/<int:arg2>/<int:arg3>')
+def discount(arg,arg2,arg3):
+  for i in range(1,arg2):
+    page_source = selenium_task(f'https://www.jumia.com.ng/catalog/?q={arg}+&price_discount={arg3}-100&page={arg2}#catalog-listing')
+    soup = BeautifulSoup(page_source, features="html.parser")
+    data = soup.find('div', class_='-pvs col12')
+    name = data.find_all('h3', class_='name')
+    price = data.find_all('div', class_='prc')
+    Old_price = data.find_all('div', class_='old')
+    image = data.find_all('img', class_='img')
+  
+    product_names_list = [product_name.text for product_name in name]
+    product_price_list = [product_price.text for product_price in price]
+    product_old_price_list = [
+        product_old_price.text for product_old_price in Old_price
+    ]
+    product_image_list = [img_tag.get('data-src') for img_tag in image]
+    product_names.append(product_names_list)
+    product_prices.append(product_price_list)
+    product_old_prices.append(product_old_price_list)
+    product_images.append(product_image_list)
 
-  product_names_list = [product_name.text for product_name in name]
-  product_price_list = [product_price.text for product_price in price]
-  product_old_price_list = [
-      product_old_price.text for product_old_price in Old_price
-  ]
-  product_image_list = [img_tag.get('data-src') for img_tag in image]
-  print(len(product_names_list))
-  print(len(product_price_list))
-  print(len(product_old_price_list))
-  print(len(product_image_list))
-  return Response(page_source, mimetype='text/html')
+  return jsonify(results)
 
 
 @app.route('/')
 def index():
-  return "200 OK"
+  return render_template('index.html')
 
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0')
+keys = db.keys()
+keys = db.keys()

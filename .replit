@@ -5,12 +5,11 @@ modules = ["python-3.10:v25-20230920-d4ad2e4"]
 channel = "stable-23_05"
 
 [[ports]]
-localPort = 5000
-externalPort = 80
+localPort = 4444
 
 [[ports]]
-localPort = 4444
-exposeLocalhost = false
+localPort = 5000
+externalPort = 80
 
 [deployment]
 deploymentTarget = "cloudrun"
