@@ -81,8 +81,8 @@ Then run the python file
           <li><strong>GET /product_name/{number_of_page}</strong> - Scrapes products from Jumia based on page number</li>
           <li><strong>GET /product_name/{discount_percentage}/{number_of_page}</strong> - Scrapes products with a discount percentage from Jumia based on page number</li>
 <h2>Example:</h2>
-<h5>`localhost/get_all/phones/2`</h5>
-<h6>`2 here is the number of page to scrape`</h6>
+<h5>localhost/get_all/phones/2</h5>
+<h6>2 here is the number of page to scrape</h6>
        
 # Contribution
 You can contribute to this project.
